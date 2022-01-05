@@ -1,5 +1,5 @@
 sceneSetups:
-- path: Assets/Scenes/LastStandScene.unity
+- path: Assets/Scenes/CampFireScene.unity
   isLoaded: 1
   isActive: 1
   isSubScene: 0
