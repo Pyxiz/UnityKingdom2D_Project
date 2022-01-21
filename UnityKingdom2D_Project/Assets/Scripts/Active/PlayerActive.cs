@@ -7,15 +7,26 @@ public struct UnitPoint {
     public float CurrentPoint;
     public float MaximumPoint;
 
-    public float CurrentProp {
+    public float CurrentStock {
         get {
             return CurrentPoint;
         }
         set {
-            CurrentPoint = value;
-            if (CurrentPoint > MaximumPoint) {
-                CurrentPoint = MaximumPoint;
+            if (value > MaximumPoint) {
+                value = MaximumPoint;
+            } else if (value < 0) {
+                value = 0;
             }
+            CurrentPoint = value;
+        }
+    }
+
+    public float MaximumStock {
+        get {
+            return MaximumPoint;
+        }
+        set {
+            CurrentPoint = MaximumPoint = value;
         }
     }
 }
@@ -141,7 +152,7 @@ public class PlayerActive : MonoBehaviour {
                     var effect = Instantiate(gm.Origin_CastLight, transform);
                     Destroy(effect, 1f);
 
-                    HealthPoint.CurrentProp += 100;
+                    HealthPoint.CurrentStock += 100;
                     gm.Item_Elixir--;
                     DamageActive.PopupDamage(gm.Origin_Damage,
                                              transform.position, 100,
