@@ -4,7 +4,7 @@ public class HitHandler : MonoBehaviour {
     public float AttackPoint;
     public bool HitArea;
 
-    private int count;
+    //private int count;
 
     private void OnTriggerEnter2D(Collider2D collision) {
         var gm = GameManager.Instance;
@@ -26,7 +26,7 @@ public class HitHandler : MonoBehaviour {
                                          DamageState.PlayerPhs);
                 var player = transform.parent.GetComponent<PlayerActive>();
                 if (player) {
-                    player.StaminaPoint.CurrentProp += 10;
+                    player.StaminaPoint.CurrentStock += 10;
                 }
                 //}
                 //count++;
@@ -34,7 +34,7 @@ public class HitHandler : MonoBehaviour {
         } else if (collision.CompareTag("Player") && collision.isTrigger) {
             var player = collision.GetComponent<PlayerActive>();
             if (!player.IsGuard) {
-                player.HealthPoint.CurrentPoint -= AttackPoint;
+                player.HealthPoint.CurrentStock -= AttackPoint;
                 DamageActive.PopupDamage(gm.Origin_Damage,
                                          position,
                                          AttackPoint,
@@ -46,7 +46,7 @@ public class HitHandler : MonoBehaviour {
         }
     }
 
-    private void OnDisable() {
-        count = 0;
-    }
+    //private void OnDisable() {
+    //    count = 0;
+    //}
 }

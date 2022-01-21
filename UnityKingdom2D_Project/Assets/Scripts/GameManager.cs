@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class GameManager : MonoBehaviour {
     public GameObject Origin_DamagedCreep => Resources.Load<GameObject>("Prefabs/Enemies/DamagedCreep");
@@ -55,6 +56,41 @@ public class GameManager : MonoBehaviour {
     }
 }
 
+[Serializable]
+public class ItemCollection {
+    public const int MAX_ITEM = 999;
+
+    public ItemSet Uid;
+    public string Name;
+    public string Description;
+    public int Amount;
+    public bool IsStack;
+
+    public int Stock {
+        get {
+            return Amount;
+        }
+        set {
+            Amount = value;
+            if (Amount > MAX_ITEM) {
+                Amount = MAX_ITEM;
+            } else if (Amount < 0) {
+                Amount = 0;
+            }
+        }
+    }
+
+    public static ItemCollection operator +(ItemCollection a, int b) {
+        a.Stock = a.Amount + b;
+        return a;
+    }
+
+    public static ItemCollection operator -(ItemCollection a, int b) {
+        a.Stock = a.Amount - b;
+        return a;
+    }
+}
+
 public enum UnitState {
     Idle, Move, Attack, Cast, Dead,
 }
@@ -75,8 +111,9 @@ public enum SkillSet {
 
 public enum ItemSet {
     Default, 
-    Power_Green, Power_Red, Power_Blue,
-    Item_Elixir, Item_Scroll,
+    GreenOre, RedStone, BlueCrystal,
+    Lumber, CrudeOil, MagicCoal, MagicPowder, GoldBar,
+    Elixir, Scroll,
 }
 
 public enum LevelSet {
