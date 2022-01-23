@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine;
 using TMPro;
@@ -7,7 +6,18 @@ using TMPro;
 public class Gui_LastStand : GUI_Active {
     public Sprite[] Cooldowns;
 
+    public void BtnMap_Handler() {
+        isMap = !isMap;
+        PnlMap.gameObject.SetActive(isMap);
+    }
+
+    public override void BtnExit_Handler() {
+        SceneManager.LoadScene("CampFireScene");
+    }
+
     protected override void InitializeComponent() {
+        PnlMap = transform.Find("PnlMap");
+
         TxtStage = transform.Find("TxtStage").GetComponent<TextMeshProUGUI>();
         TxtKill = transform.Find("TxtKill").GetComponent<TextMeshProUGUI>();
         TxtGp = transform.Find("TxtGp").GetComponent<TextMeshProUGUI>();
@@ -27,7 +37,12 @@ public class Gui_LastStand : GUI_Active {
         BarMp = transform.Find("BarMp").GetComponent<Slider>();
         BarSp = transform.Find("BarSp").GetComponent<Slider>();
 
+        input.GamePlay.Map.performed += (e) => {
+            BtnMap_Handler();
+        };
+
         player = Player.GetComponent<PlayerActive>();
+        isMap = false;
     }
 
     protected override void GuiMonitor() {
@@ -59,6 +74,8 @@ public class Gui_LastStand : GUI_Active {
         }
     }
 
+    private Transform PnlMap;
+
     private TextMeshProUGUI TxtStage;
     private TextMeshProUGUI TxtKill;
     private TextMeshProUGUI TxtGp;
@@ -76,4 +93,5 @@ public class Gui_LastStand : GUI_Active {
     private Slider BarMp;
 
     private PlayerActive player;
+    private bool isMap;
 }
