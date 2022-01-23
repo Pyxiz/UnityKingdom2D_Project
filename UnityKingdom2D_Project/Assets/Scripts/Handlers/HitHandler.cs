@@ -26,7 +26,7 @@ public class HitHandler : MonoBehaviour {
                                          DamageState.PlayerPhs);
                 var player = transform.parent.GetComponent<PlayerActive>();
                 if (player) {
-                    player.StaminaPoint.CurrentStock += 10;
+                    GameManager.Instance.Data.StaminaPoint.CurrentStock += 10;
                 }
                 //}
                 //count++;
@@ -34,7 +34,7 @@ public class HitHandler : MonoBehaviour {
         } else if (collision.CompareTag("Player") && collision.isTrigger) {
             var player = collision.GetComponent<PlayerActive>();
             if (!player.IsGuard) {
-                player.HealthPoint.CurrentStock -= AttackPoint;
+                GameManager.Instance.Data.HealthPoint.CurrentStock -= AttackPoint;
                 DamageActive.PopupDamage(gm.Origin_Damage,
                                          position,
                                          AttackPoint,

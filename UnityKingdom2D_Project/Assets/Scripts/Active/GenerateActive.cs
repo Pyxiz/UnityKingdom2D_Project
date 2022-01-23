@@ -13,10 +13,16 @@ public class GenerateActive : MonoBehaviour {
                 if (spawntime > 0) {
                     spawntime -= Time.deltaTime;
                 }
-
+                var gm = GameManager.Instance;
                 if (spawntime < 0) {
                     spawntime = 1f;
                     GenerateAction?.Invoke(transform, transform.tag);
+                    //if (UnityEngine.Random.Range(1, 10) <= 5) {
+                    //    Instantiate(gm.Origin_Lumber, gm.RandomPosition(transform.position), Quaternion.identity);
+                    //}
+                    //if (UnityEngine.Random.Range(1, 10) <= 2) {
+                    //    Instantiate(gm.Origin_CrudeOil, gm.RandomPosition(transform.position), Quaternion.identity);
+                    //}
                 }
             }
         }

@@ -48,7 +48,7 @@ public class GameData : ScriptableObject {
 
         MoveSpeed = 5f;
         AtkSpeed = 0.5f;
-        LevelPoint = LevelSet.Default;
+        LevelPoint = LevelSet.Demo;
         KillPoint = 0;
         GamePoint = 100;
 

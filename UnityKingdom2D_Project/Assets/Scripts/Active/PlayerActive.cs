@@ -37,12 +37,7 @@ public class PlayerActive : MonoBehaviour {
     public bool IsGuard;
     public float[] CooldownSkill;
 
-    public UnitPoint HealthPoint;
-    public UnitPoint MagicPoint;
-    public UnitPoint StaminaPoint;
-    public float MoveSpeed;
-    public float AtkSpeed;
-
+    public GameManager Gm { get; set; }
     public float[] CastTime { get; set; }
 
     private Animator playerAnim;
@@ -57,7 +52,7 @@ public class PlayerActive : MonoBehaviour {
             State = UnitState.Attack;
             playerAnim.SetTrigger("Attacking");
             attackAudio.Play();
-            attackTime = AtkSpeed;
+            attackTime = Gm.Data.AtkSpeed;
         }
     }
 
@@ -69,10 +64,10 @@ public class PlayerActive : MonoBehaviour {
             switch (skill) {
                 case SkillSet.SplashSwing:
                     skill_1Audio.Play();
-                    StaminaPoint.CurrentPoint -= 20; 
+                    Gm.Data.StaminaPoint.CurrentPoint -= 20; 
                     break;
                 case SkillSet.DemonShell:
-                    MagicPoint.CurrentPoint -= 50;
+                    Gm.Data.MagicPoint.CurrentPoint -= 50;
                     break;
             }
             yield return new WaitForSeconds(1f);
@@ -88,8 +83,8 @@ public class PlayerActive : MonoBehaviour {
             directPos = moving;
             var xAndy = Mathf.Sqrt(Mathf.Pow(moving.x, 2) +
                                    Mathf.Pow(moving.y, 2));
-            var pos_x = moving.x * MoveSpeed * Time.fixedDeltaTime / xAndy;
-            var pos_y = moving.y * MoveSpeed * Time.fixedDeltaTime / xAndy;
+            var pos_x = moving.x * Gm.Data.MoveSpeed * Time.fixedDeltaTime / xAndy;
+            var pos_y = moving.y * Gm.Data.MoveSpeed * Time.fixedDeltaTime / xAndy;
             var pos_z = transform.position.z;
             transform.Translate(pos_x, pos_y, pos_z, Space.Self);
             playerAnim.SetBool("IsMoving", true);
@@ -105,10 +100,10 @@ public class PlayerActive : MonoBehaviour {
     }
 
     private void Player_Death() {
-        if (HealthPoint.CurrentPoint <= 0) {
+        if (Gm.Data.HealthPoint.CurrentPoint <= 0) {
             GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeAll;
             Player_Movement(Vector2.zero);
-            HealthPoint.CurrentPoint = 0;
+            Gm.Data.HealthPoint.CurrentPoint = 0;
             playerAnim.SetTrigger("Falling");
             State = UnitState.Dead;
             IsAlive = false;
@@ -123,9 +118,14 @@ public class PlayerActive : MonoBehaviour {
                                 .GetComponent<AudioSource>();
         attackAudio = transform.Find("Barbarian").GetComponent<AudioSource>();
         CastTime = new float[] { 0f, 0f, 0f };
+        Gm = GameManager.Instance;
     }
 
     private void FixedUpdate() {
+        if (Gm == null) {
+            Gm = GameManager.Instance;
+        }
+
         if (IsAlive) {
             var moveaway = Vector2.zero;
             moveaway.x = Input.GetAxis("Horizontal");
@@ -136,29 +136,29 @@ public class PlayerActive : MonoBehaviour {
             if (Input.GetButtonDown("Jump")) {
                 Player_Attack();
             } else if (Input.GetKeyDown(KeyCode.Alpha1)) {
-                if (StaminaPoint.CurrentPoint >= 20) {
+                if (Gm.Data.StaminaPoint.CurrentPoint >= 20) {
                     StartCoroutine(Player_Attack(SkillSet.SplashSwing));
                 }
             } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
-                if (gm.Item_Scroll > 0 && MagicPoint.CurrentPoint >= 50) {
+                if (gm.Data.Item_Scroll.Amount > 0 && Gm.Data.MagicPoint.CurrentPoint >= 50) {
                     StartCoroutine(Player_Attack(SkillSet.DemonShell, () => {
                         var shell = Instantiate(gm.Origin_Shell, transform);
-                        gm.Item_Scroll--;
+                        gm.Data.Item_Scroll -= 1;
                         Destroy(shell, 10f);
                     }));
                 }
             } else if (Input.GetKeyDown(KeyCode.Alpha3)) {
-                if (gm.Item_Elixir > 0 && HealthPoint.CurrentPoint < HealthPoint.MaximumPoint && CastTime[2] == 0) {
+                if (gm.Data.Item_Elixir.Amount > 0 && Gm.Data.HealthPoint.CurrentPoint < Gm.Data.HealthPoint.MaximumPoint && CastTime[2] == 0) {
                     var effect = Instantiate(gm.Origin_CastLight, transform);
                     Destroy(effect, 1f);
 
-                    HealthPoint.CurrentStock += 100;
-                    gm.Item_Elixir--;
+                    Gm.Data.HealthPoint.CurrentStock += 100;
+                    gm.Data.Item_Elixir -= 1;
                     DamageActive.PopupDamage(gm.Origin_Damage,
                                              transform.position, 100,
                                              DamageState.AllyHeal);
-                    if (HealthPoint.CurrentPoint > HealthPoint.MaximumPoint) {
-                        HealthPoint.CurrentPoint = HealthPoint.MaximumPoint;
+                    if (Gm.Data.HealthPoint.CurrentPoint > Gm.Data.HealthPoint.MaximumPoint) {
+                        Gm.Data.HealthPoint.CurrentPoint = Gm.Data.HealthPoint.MaximumPoint;
                     }
                     CastTime[2] = CooldownSkill[2];
                 }
